@@ -8,18 +8,17 @@
 
 #include "characters.c"
 
-char screenBuffer[128];
+char screen[8];
+char buffer[8];
 
-char bufferSize;
-
-void clock(char pin)
-{
+void clock(char pin) {
+    
     PORTD |= (1 << pin);
     PORTD &= (0 << pin);
 }
 
-void init()
-{
+void init() {
+    
     PORTB = 0b00000000;
 	DDRB = 0b11111111;
     
@@ -38,70 +37,65 @@ void init()
     clock(RESETPIN);
 }
 
-void writeScreen(char *data)
-{
-    char i;
+
+void writeBuffer(char *data) {
     
-    for (i = 0; i < 8; i++)
-        screenBuffer[i] = character[*(data++)-0x30][i];
+    int i;
+    
+    for(i = 0; i < 8; i++)
+        buffer[i] = *(data++);
+    
 }
 
-void writeBuffer(char *data)
-{
-    char i;
-    char j = 0;
+void writeScreen() {
     
-    while (*data) {
-        
-        for (i = 0; i < 8; i++)
-            screenBuffer[j++] = character[*data-0x30][i];
-        
-        data++;
+    int i;
+    
+    for(i = 0; i < 8; i++)
+        screen[i] = buffer[i];
+}
+
+void clearScreen() {
+    
+    int i;
+    
+    for(i = 0; i < 8; i++)
+        screen[i] = 0x00;
+    
+}
+
+void marquee(char *data) {
+    
+    while(*data) {
+        writeBuffer(character[*(data++)-0x30]);
+        writeScreen();
+        _delay_ms(20);
     }
     
-    bufferSize = j;
-}
-
-void shiftBufferLeft()
-{
-    char i,j,t;
-    
-    /*for (i = 0; i <= bufferSize; i++) {
-        screenBuffer[i] = (screenBuffer[i] << 1) | ((screenBuffer[i+8] >> 7) & 0x01);
-    }*/
-    
-    for (i=0; i<8; i++) { // loop on the eight lines
-        t = (screenBuffer[i] >> 7) & 0x01;  // store first bit
-        for (j=i; j<bufferSize-8; j+=8) { // loop on all the bytes of the line but the last one
-            screenBuffer[j] = (screenBuffer[j] << 1) | ((screenBuffer[j+8] >> 7) & 0x01);
-        }
-        screenBuffer[j] = (screenBuffer[j] << 1) | t; // handle the last byte of the line
-    }
+    clearScreen();
     
 }
 
 
-int main(void)
-{
+int main(void) {
+    
     init();
     
     char str[16];
+    sprintf(str,"CHRIS");
     
-    (void)sprintf(str,"CHRIS.");
-    writeBuffer(str);
+    marquee(str);
     
-    for(;;){
+    for(;;) {
         
-        shiftBufferLeft();
-        _delay_ms(20);
         
     }
     
 	return 0;
 }
 
-ISR(TIMER0_OVF_vect)
-{
+ISR(TIMER0_OVF_vect) {
+
     static char rowNumber = 0;
     
     PORTB = 0x00;
@@ -114,6 +108,6 @@ ISR(TIMER0_OVF_vect)
         clock(RESETPIN);
     }
     
-    PORTB = screenBuffer[rowNumber++];
+    PORTB = screen[rowNumber++];
     
 }
