@@ -66,6 +66,7 @@ void clearScreen() {
 
 void marquee(char *data) {
     
+    /*
     while(*data) {
         writeBuffer(character[*(data++)-0x30]);
         writeScreen();
@@ -73,6 +74,25 @@ void marquee(char *data) {
     }
     
     clearScreen();
+     */
+    
+    int i,j;
+    
+    while(*data) {
+        
+        for(i = 0; i < 8; i++) {
+        
+            for(j = 0; j < 8; j++) {
+            
+                buffer[j] = (character[(*data - 0x30)][j] >> (8-i));
+                writeScreen();
+            }
+            _delay_ms(10);
+        }
+        
+        data++;
+        
+    }
     
 }
 
