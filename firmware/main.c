@@ -68,18 +68,20 @@ void marquee(char *data) {
     
     int i,j;
 
-    while(*(data+1)) {
+    while(*data) {
         
         // loop to shift full character
         for(i = 0; i < 8; i++) {
-        
-            // loop to shift character
-            for(j = 0; j < 8; j++) {
             
-                buffer[j] = (character[(*data - 0x30)][j] << i) | (character[(*(data+1) - 0x30)][j] >> (8-i));
-                writeScreen();
-            }
             _delay_ms(10);
+            
+            // loop to shift column
+            for(j = 0; j < 8; j++)
+                buffer[j] = (character[(*data - 0x30)][j] >> (8-i)); //| (character[(*(data+1) - 0x30)][j] >> (8-i));
+            
+            
+            writeScreen();
+            
         }
         
         data++;
@@ -87,7 +89,6 @@ void marquee(char *data) {
     }
     
     clearScreen();
-    
 }
 
 
