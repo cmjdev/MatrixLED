@@ -63,7 +63,7 @@ void marquee(char *data) {
         // loop to shift full character
         for(i = 0; i < 8; i++) {
             
-            _delay_ms(100);
+            _delay_ms(10);
             
             // loop to shift column
             for(j = 0; j < 8; j++)
@@ -72,9 +72,16 @@ void marquee(char *data) {
         
         data++;
         
+        for(i = 0; i < 8; i++) {
+            
+            // loop to shift column
+            for(j = 0; j < 8; j++)
+                screen[j] = (screen[j] << i);
+            
+            _delay_ms(12);
+        }
+        
     }
-    
-    clearScreen();
 }
 
 
@@ -85,11 +92,10 @@ int main(void) {
     char str[16];
     sprintf(str,"CHRIS");
     
-    marquee(str);
     
     for(;;) {
         
-        
+        marquee(str);
     }
     
 	return 0;
@@ -97,7 +103,7 @@ int main(void) {
 
 ISR(TIMER0_OVF_vect) {
 
-    static char rowNumber = 0;
+    static int rowNumber = 0;
     
     PORTB = 0x00;
     
