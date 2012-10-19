@@ -58,30 +58,45 @@ void marquee(char *data) {
     
     int i,j;
 
-    while(*data) {
+    while (*data) {
         
         // loop to shift full character
         for(i = 0; i < 8; i++) {
             
-            _delay_ms(10);
+            _delay_ms(12);
             
             // loop to shift column
             for(j = 0; j < 8; j++)
-                screen[j] = (character[(*data - 0x30)][j] >> (8-i));            
+                screen[j] = (screen[j] << 1) | (character[(*data - 0x30)][j] >> (8-i));
+        }
+        
+        if (!(*(++data))) break;
+        
+        // loop to shift full character
+        for(i = 0; i < 8; i++) {
+            
+            _delay_ms(12);
+            
+            // loop to shift column
+            for(j = 0; j < 8; j++)
+                screen[j] = (screen[j] << 1) | (character[(*data - 0x30)][j] >> (8-i)) ;
         }
         
         data++;
         
-        for(i = 0; i < 8; i++) {
-            
-            // loop to shift column
-            for(j = 0; j < 8; j++)
-                screen[j] = (screen[j] << i);
-            
-            _delay_ms(12);
-        }
-        
     }
+    
+    // loop to shift full character
+    for(i = 0; i < 8; i++) {
+        
+        _delay_ms(15);
+        
+        // loop to shift column
+        for(j = 0; j < 8; j++)
+            screen[j] <<= 1 ;
+    }
+    
+    
 }
 
 
@@ -89,8 +104,8 @@ int main(void) {
     
     init();
     
-    char str[16];
-    sprintf(str,"CHRIS");
+    char str[32];
+    sprintf(str,"ABCDEFGHIJKLMNOPQRSTUVWXYZ");
     
     
     for(;;) {
