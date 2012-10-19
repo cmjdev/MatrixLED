@@ -105,7 +105,7 @@ int main(void) {
     init();
     
     char str[32];
-    sprintf(str,"ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    sprintf(str,"TESTING");
     
     
     for(;;) {
