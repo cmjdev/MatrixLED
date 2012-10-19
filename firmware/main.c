@@ -9,7 +9,6 @@
 #include "characters.c"
 
 char screen[8];
-char buffer[8];
 
 void clock(char pin) {
     
@@ -37,30 +36,21 @@ void init() {
     clock(RESETPIN);
 }
 
-
-void writeBuffer(char *data) {
-    
-    int i;
-    
-    for(i = 0; i < 8; i++)
-        buffer[i] = *(data++);
-    
-}
-
-void writeScreen() {
-    
-    int i;
-    
-    for(i = 0; i < 8; i++)
-        screen[i] = buffer[i];
-}
-
 void clearScreen() {
     
     int i;
     
     for(i = 0; i < 8; i++)
         screen[i] = 0x00;
+}
+
+
+void writeScreen(char *data) {
+    
+    int i;
+    
+    for(i = 0; i < 8; i++)
+        screen[i] = *(data++);
     
 }
 
@@ -73,15 +63,11 @@ void marquee(char *data) {
         // loop to shift full character
         for(i = 0; i < 8; i++) {
             
-            _delay_ms(10);
+            _delay_ms(100);
             
             // loop to shift column
             for(j = 0; j < 8; j++)
-                buffer[j] = (character[(*data - 0x30)][j] >> (8-i)); //| (character[(*(data+1) - 0x30)][j] >> (8-i));
-            
-            
-            writeScreen();
-            
+                screen[j] = (character[(*data - 0x30)][j] >> (8-i));            
         }
         
         data++;
