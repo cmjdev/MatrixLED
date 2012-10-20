@@ -127,7 +127,7 @@ int main(void) {
     for(;;) {
         
         if (!(PIND & 0b10000000)) {
-            number++;
+            number = (++number > 9) ? 0 : number;
             sprintf(str,"%i",number);
             writeCharacter(str);
             _delay_ms(25);
