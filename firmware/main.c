@@ -2,11 +2,12 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <stdio.h>
+#include <avr/pgmspace.h>
+
+#include "characters.c"
 
 #define CLOCKPIN   0x00
 #define RESETPIN   0x01
-
-#include "characters.c"
 
 char screen[8];
 
@@ -54,6 +55,15 @@ void writeScreen(char *data) {
     
 }
 
+void writeCharacter(char *data) {
+    
+    int i;
+    
+    for(i = 0; i < 8; i++)
+        screen[i] = pgm_read_byte(&character[*data][i]);
+    
+}
+
 void marquee(char *data) {
     
     int i,j;
@@ -67,7 +77,7 @@ void marquee(char *data) {
             
             // loop to shift column
             for(j = 0; j < 8; j++)
-                screen[j] = (screen[j] << 1) | (character[(*data - 0x30)][j] >> (8-i));
+                screen[j] = (screen[j] << 1) | (pgm_read_byte(&character[*data][j]) >> (8-i));
         }
         
         if (!(*(++data))) break;
@@ -79,7 +89,7 @@ void marquee(char *data) {
             
             // loop to shift column
             for(j = 0; j < 8; j++)
-                screen[j] = (screen[j] << 1) | (character[(*data - 0x30)][j] >> (8-i)) ;
+                screen[j] = (screen[j] << 1) | (pgm_read_byte(&character[*data][j]) >> (8-i)) ;
         }
         
         data++;
@@ -105,12 +115,24 @@ int main(void) {
     init();
     
     char str[32];
-    sprintf(str,"TESTING");
+    int number = 0;
     
+    sprintf(str,"CMJDEV");
+    
+    marquee(str);
+    
+    sprintf(str,"%i",number);
+    writeCharacter(str);
     
     for(;;) {
         
-        marquee(str);
+        if (!(PIND & 0b10000000)) {
+            number++;
+            sprintf(str,"%i",number);
+            writeCharacter(str);
+            _delay_ms(25);
+        }
+        
     }
     
 	return 0;
