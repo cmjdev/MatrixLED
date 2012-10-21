@@ -8,6 +8,8 @@
 
 #define CLOCKPIN   0x00
 #define RESETPIN   0x01
+#define DEFAULT     100
+#define DEBOUNCE    200
 
 char screen[8];
 
@@ -73,7 +75,7 @@ void marquee(char *data) {
         // loop to shift full character
         for(i = 0; i < 8; i++) {
             
-            _delay_ms(12);
+            _delay_ms(DEFAULT);
             
             // loop to shift column
             for(j = 0; j < 8; j++)
@@ -85,7 +87,7 @@ void marquee(char *data) {
         // loop to shift full character
         for(i = 0; i < 8; i++) {
             
-            _delay_ms(12);
+            _delay_ms(DEFAULT);
             
             // loop to shift column
             for(j = 0; j < 8; j++)
@@ -99,7 +101,7 @@ void marquee(char *data) {
     // loop to shift full character
     for(i = 0; i < 8; i++) {
         
-        _delay_ms(15);
+        _delay_ms(DEFAULT);
         
         // loop to shift column
         for(j = 0; j < 8; j++)
@@ -130,7 +132,7 @@ int main(void) {
             number = (++number > 9) ? 0 : number;
             sprintf(str,"%i",number);
             writeCharacter(str);
-            _delay_ms(25);
+            _delay_ms(DEBOUNCE);
         }
         
     }

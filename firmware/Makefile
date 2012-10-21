@@ -5,12 +5,12 @@
 
 
 DEVICE     = at90usb162
-CLOCK      = 16000000UL
+CLOCK      = 2000000UL
 OBJECTS    = main.o
 
 # Tune the lines below only if you know what you are doing:
 
-COMPILE = avr-gcc -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE)
+COMPILE = avr-gcc -Wall -Os -mmcu=$(DEVICE) -DF_CPU=$(CLOCK)
 
 # symbolic targets:
 all:	main.hex
